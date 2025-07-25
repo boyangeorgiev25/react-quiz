@@ -6,26 +6,32 @@ import data from "./questions.json";
 export default function App() {
   const [index, setIndex] = useState(0);
   const question = data.questions[index];
+  const [answer, setAnswer] = useState(null);
 
   return (
     <div className="App">
       <Header></Header>
       <Question question={question} />
-      <Options options={question.options} />
+      <Options
+        options={question.options}
+        answer={answer}
+        correctAnswer={question.correctOption}
+        setAnswer={setAnswer}
+      />
       <NextBtn setIndex={setIndex} />
     </div>
   );
 }
 
 function Question({ question }) {
-  return <h4 className="start">{question.question}</h4>;
+  return <p className="question">{question.question}</p>;
 }
 
 function Options({ options }) {
   return (
     <div className="options">
       {options.map((opt, i) => (
-        <button className="btn" key={i}>
+        <button className="btn btn-option" key={i}>
           {opt}
         </button>
       ))}
@@ -35,7 +41,7 @@ function Options({ options }) {
 
 function NextBtn({ setIndex }) {
   return (
-    <button className="btn" onClick={() => setIndex((i) => i + 1)}>
+    <button className="btn btn-ui" onClick={() => setIndex((i) => i + 1)}>
       Next
     </button>
   );
