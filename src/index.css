@@ -99,6 +99,14 @@ h4 {
   color: var(--color-medium);
 }
 
+.question {
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(--color-light);
+}
+
 progress {
   -webkit-appearance: none;
   width: 100%;
