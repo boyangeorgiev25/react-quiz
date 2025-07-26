@@ -6,7 +6,7 @@ import data from "./questions.json";
 function reducer(state, action) {
   switch (action.type) {
     case "next":
-      return { ...state, index: state.index + 1, time: (state.time = 30) };
+      return { ...state, index: state.index + 1, time: 30 };
     case "setAnswer":
       return { ...state, answer: action.payload };
     case "addPoints":
