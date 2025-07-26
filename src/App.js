@@ -6,7 +6,10 @@ import data from "./questions.json";
 function reducer(state, action) {
   switch (action.type) {
     case "next":
-      return { ...state, index: state.index + 1, time: 30 };
+      if (state.index + 1 >= data.questions.length) {
+        return { ...state, isFinished: true };
+      }
+      return { ...state, index: state.index + 1, time: 30, answer: null };
     case "setAnswer":
       return { ...state, answer: action.payload };
     case "addPoints":
@@ -14,7 +17,7 @@ function reducer(state, action) {
     case "tick":
       return { ...state, time: state.time - 1 };
     case "start":
-      return { ...state, isStarted: (state.isStarted = true) };
+      return { ...state, isStarted: true };
     default:
       throw Error("Error");
   }
@@ -27,13 +30,16 @@ export default function App() {
     time: 30,
     answer: null,
     isStarted: false,
+    isFinished: false,
   };
   const [state, dispatch] = useReducer(reducer, initaData);
-  const { index, points, time, answer, isStarted } = state;
+  const { index, points, time, answer, isStarted, isFinished } = state;
 
-  const question = data.questions[index];
+  const questions = data.questions;
+  const question = questions[index];
 
   useEffect(() => {
+    if (!isStarted || isFinished) return;
     if (state.time === 0) {
       dispatch({ type: "next" });
       return;
@@ -44,17 +50,19 @@ export default function App() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [state.time]);
+  }, [state.time, isStarted, isFinished]);
 
   return (
     <div className="App">
       {!isStarted ? (
-        <Start isStarted={dispatch} question={data.questions} />
+        <Start isStarted={dispatch} question={questions} />
+      ) : isFinished ? (
+        <FinalScreen points={points} questions={questions} />
       ) : (
         <>
           <Header />
-          <ProgressBar index={index} numQuestions={data.questions.length} />
-          <Points questions={data.questions} points={points} />
+          <ProgressBar index={index} numQuestions={questions.length} />
+          <Points questions={questions} points={points} />
           <Question question={question} />
           <Options
             options={question.options}
@@ -161,4 +169,16 @@ export default function App() {
       </button>
     );
   }
+}
+
+function FinalScreen({ points, questions }) {
+  return (
+    <>
+      <Header />
+      <h2>Congratulations!</h2>
+      <h3>
+        You scored {points} out of {questions.length * 10}
+      </h3>
+    </>
+  );
 }
